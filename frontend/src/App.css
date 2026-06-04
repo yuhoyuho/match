@@ -1,0 +1,62 @@
+.app-shell {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  gap: 32px;
+  padding: 48px 20px;
+}
+
+.intro {
+  max-width: 720px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #0f766e;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.summary {
+  max-width: 560px;
+  margin: 0 auto;
+  color: #5b6473;
+}
+
+.status-grid {
+  width: min(760px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.status-grid article {
+  min-height: 96px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid #d9dee7;
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.status-grid span {
+  color: #687386;
+  font-size: 14px;
+}
+
+.status-grid strong {
+  color: #172033;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+}
