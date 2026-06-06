@@ -4,7 +4,11 @@ import com.realmatch.backend.auth.application.port.out.AuthPersistencePort;
 import com.realmatch.backend.auth.domain.model.AuthAccount;
 import com.realmatch.backend.auth.domain.model.RefreshTokenSession;
 import java.util.Optional;
+
+import com.realmatch.backend.user.adapter.out.persistence.UserJpaEntity;
+import com.realmatch.backend.user.adapter.out.persistence.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Component;
 
 /** 인증 Persistence Adapter입니다. TODO: JPA Repository를 사용해 AuthPersistencePort를 구현합니다. */
@@ -14,15 +18,21 @@ public class AuthPersistenceAdapter implements AuthPersistencePort {
 
   private final AuthProviderJpaRepository authProviderJpaRepository;
   private final RefreshTokenJpaRepository refreshTokenJpaRepository;
+  private final UserJpaRepository userJpaRepository;
 
   @Override
   public Optional<AuthAccount> findAuthAccount(String providerType, String providerUserId) {
-    throw new UnsupportedOperationException("TODO: provider_type + provider_user_id로 계정을 조회합니다.");
+    return authProviderJpaRepository.findByProviderTypeAndProviderUserId(providerType, providerUserId)
+            .map(this::toDomain);
   }
 
   @Override
   public AuthAccount saveAuthAccount(AuthAccount authAccount) {
-    throw new UnsupportedOperationException("TODO: 소셜 계정 연결 정보를 저장합니다.");
+    // DB 접근용 JPA 엔티티 생성 후 소셜 Account 저장
+    AuthProviderJpaEntity entity = AuthProviderJpaEntity.from(authAccount);
+    AuthProviderJpaEntity savedEntity = authProviderJpaRepository.save(entity);
+
+    return toDomain(savedEntity);
   }
 
   @Override
@@ -33,5 +43,25 @@ public class AuthPersistenceAdapter implements AuthPersistencePort {
   @Override
   public RefreshTokenSession saveRefreshTokenSession(RefreshTokenSession session) {
     throw new UnsupportedOperationException("TODO: Refresh Token 세션을 저장합니다.");
+  }
+
+  @Override
+  public Long createUser(String email, String nickname) {
+
+    UserJpaEntity user = UserJpaEntity.createForOAuth(email, nickname);
+    return userJpaRepository.save(user).getUserId();
+  }
+
+
+  private AuthAccount toDomain(AuthProviderJpaEntity entity) {
+    return new AuthAccount(
+            entity.getProviderId(),
+            entity.getUserId(),
+            entity.getProviderType(),
+            entity.getProviderUserId(),
+            entity.getProviderEmail(),
+            entity.getConnectedAt(),
+            entity.getLastAuthenticatedAt()
+    );
   }
 }

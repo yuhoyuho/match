@@ -1,13 +1,13 @@
 package com.realmatch.backend.auth.application.port.in;
 
 /**
- * 인증 도메인 입력 포트입니다.
+ * 인증 도메인 입력 포트
  *
- * <p>TODO(PDF 설계서 기준): 소셜 로그인, 토큰 재발급, 로그아웃, 계정 연동 유스케이스를 구현합니다.
+ * 소셜 로그인, 토큰 재발급, 로그아웃, 계정 연동 유스케이스를 구현
  */
 public interface AuthUseCase {
 
-  TokenResult socialLogin(SocialLoginCommand command);
+  TokenResult oauth2Login(OAuth2LoginCommand command);
 
   TokenResult reissueToken(ReissueTokenCommand command);
 
@@ -15,21 +15,18 @@ public interface AuthUseCase {
 
   void linkProvider(LinkProviderCommand command);
 
-  record SocialLoginCommand(
+  record OAuth2LoginCommand(
       String providerType,
-      String providerToken,
-      String authorizationCode,
-      String deviceId,
-      String deviceOs,
-      String appVersion,
-      String pushToken) {}
+      String providerUserId,
+      String email,
+      String nickname,
+      String profileImageUrl) {}
 
-  record ReissueTokenCommand(String refreshToken, String deviceId) {}
+  record ReissueTokenCommand(String refreshToken) {}
 
-  record LogoutCommand(Long userId, String refreshToken, String deviceId) {}
+  record LogoutCommand(Long userId, String refreshToken) {}
 
-  record LinkProviderCommand(
-      Long userId, String providerType, String providerToken, String authorizationCode) {}
+  record LinkProviderCommand(Long userId, String providerType) {}
 
   record TokenResult(
       String accessToken, String refreshToken, Long userId, boolean profileCompleted) {}

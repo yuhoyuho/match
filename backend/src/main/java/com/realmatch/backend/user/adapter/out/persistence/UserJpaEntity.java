@@ -25,4 +25,19 @@ public class UserJpaEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "user_id")
   private Long userId;
+
+  @Column(name = "user_email")
+  private String email;
+
+  @Column(name = "user_nickname")
+  private String nickname;
+
+  public UserJpaEntity(String email, String nickname) {
+    this.email = email;
+    this.nickname = nickname;
+  }
+
+  public static UserJpaEntity createForOAuth(String email, String nickname) {
+    return new UserJpaEntity(email, nickname);
+  }
 }
