@@ -87,6 +87,12 @@ http://localhost:5173
 
 프론트엔드에서 `/api`로 시작하는 요청은 Vite 프록시를 통해 백엔드 서버로 전달됩니다.
 
+## API 명세서
+
+API 명세서는 [docs/API_SPEC.md](/Users/lyh/Desktop/RealMatch/docs/API_SPEC.md)에 따로 정리되어 있습니다.
+
+현재 명세서는 구현 전 스캐폴딩 기준 초안이며, `Routes.java`, 각 도메인의 `UseCase`, Web Adapter, Flyway 스키마를 기준으로 작성했습니다.
+
 ## 로컬 인프라 포트
 
 기존 로컬 개발 환경과의 포트 충돌을 줄이기 위해 PostgreSQL과 Redis의 호스트 포트는 기본 포트와 다르게 설정되어 있습니다.
