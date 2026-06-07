@@ -3,15 +3,14 @@ package com.realmatch.backend.auth.adapter.out.persistence;
 import com.realmatch.backend.auth.application.port.out.AuthPersistencePort;
 import com.realmatch.backend.auth.domain.model.AuthAccount;
 import com.realmatch.backend.auth.domain.model.RefreshTokenSession;
-import java.util.Optional;
-
 import com.realmatch.backend.user.adapter.out.persistence.UserJpaEntity;
 import com.realmatch.backend.user.adapter.out.persistence.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Component;
 
-/** 인증 Persistence Adapter입니다. TODO: JPA Repository를 사용해 AuthPersistencePort를 구현합니다. */
+import java.util.Optional;
+
+/** 인증 Persistence Adapter */
 @Component
 @RequiredArgsConstructor
 public class AuthPersistenceAdapter implements AuthPersistencePort {
@@ -37,12 +36,16 @@ public class AuthPersistenceAdapter implements AuthPersistencePort {
 
   @Override
   public Optional<RefreshTokenSession> findRefreshTokenSession(String tokenHash) {
-    throw new UnsupportedOperationException("TODO: Refresh Token hash로 세션을 조회합니다.");
+    return refreshTokenJpaRepository.findByTokenHash(tokenHash)
+            .map(this::toDomain);
   }
 
   @Override
   public RefreshTokenSession saveRefreshTokenSession(RefreshTokenSession session) {
-    throw new UnsupportedOperationException("TODO: Refresh Token 세션을 저장합니다.");
+    RefreshTokenJpaEntity entity = RefreshTokenJpaEntity.from(session);
+    RefreshTokenJpaEntity savedEntity = refreshTokenJpaRepository.save(entity);
+
+    return toDomain(savedEntity);
   }
 
   @Override
@@ -62,6 +65,18 @@ public class AuthPersistenceAdapter implements AuthPersistencePort {
             entity.getProviderEmail(),
             entity.getConnectedAt(),
             entity.getLastAuthenticatedAt()
+    );
+  }
+
+  private RefreshTokenSession toDomain(RefreshTokenJpaEntity entity) {
+    return new RefreshTokenSession(
+            entity.getRefreshTokenId(),
+            entity.getUserId(),
+            entity.getTokenHash(),
+            entity.getDeviceId(),
+            entity.getExpiresAt(),
+            entity.getRevokedAt(),
+            entity.getCreatedAt()
     );
   }
 }

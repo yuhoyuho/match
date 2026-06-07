@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Map;
 
 /** JWT 발급 Adapter입니다. TODO: application.yml의 TTL 설정을 사용해 Access/Refresh Token을 발급합니다. */

@@ -1,8 +1,8 @@
 package com.realmatch.backend.auth.application.port.out;
 
-import com.realmatch.backend.auth.application.port.in.AuthUseCase;
 import com.realmatch.backend.auth.domain.model.AuthAccount;
 import com.realmatch.backend.auth.domain.model.RefreshTokenSession;
+
 import java.util.Optional;
 
 /**

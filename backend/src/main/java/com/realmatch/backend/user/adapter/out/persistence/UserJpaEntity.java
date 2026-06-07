@@ -11,9 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * users 테이블과 매핑되는 JPA 엔티티입니다.
- *
- * <p>TODO: Flyway 스키마 컬럼을 기준으로 필요한 필드를 추가하고 도메인 모델과의 매핑을 PersistenceAdapter에서 처리합니다.
+ * users 테이블과 매핑되는 JPA 엔티티
  */
 @Getter
 @Entity
@@ -26,10 +24,10 @@ public class UserJpaEntity {
   @Column(name = "user_id")
   private Long userId;
 
-  @Column(name = "user_email")
+  @Column(name = "email")
   private String email;
 
-  @Column(name = "user_nickname")
+  @Column(name = "nickname")
   private String nickname;
 
   public UserJpaEntity(String email, String nickname) {
