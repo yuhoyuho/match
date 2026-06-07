@@ -33,4 +33,8 @@ public class RefreshTokenSession {
     public static RefreshTokenSession create(Long userId, String tokenHash, String deviceId, OffsetDateTime expiresAt, OffsetDateTime createdAt) {
         return new RefreshTokenSession(null, userId, tokenHash, deviceId, expiresAt, null, createdAt);
     }
+
+    public RefreshTokenSession revoke(OffsetDateTime now) {
+        return new RefreshTokenSession(refreshTokenId, userId, tokenHash, deviceId, expiresAt, now, createdAt);
+    }
 }

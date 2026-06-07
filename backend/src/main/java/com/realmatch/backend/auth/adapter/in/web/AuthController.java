@@ -6,10 +6,11 @@ import com.realmatch.backend.auth.application.port.in.AuthUseCase.LogoutCommand;
 import com.realmatch.backend.auth.application.port.in.AuthUseCase.ReissueTokenCommand;
 import com.realmatch.backend.auth.application.port.in.AuthUseCase.TokenResult;
 import com.realmatch.backend.common.Routes;
+import com.realmatch.backend.config.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 /** TODO: 요청 검증, 인증 사용자 추출, Command 변환, TokenResult 응답 변환을 구현합니다. */
@@ -26,18 +27,19 @@ public class AuthController {
 
   @PostMapping(Routes.AUTH_LOGOUT)
   public void logout(
-      @RequestHeader(name = "X-USER-ID", required = false) Long userId,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody ReissueTokenRequest request) {
-    authUseCase.logout(new LogoutCommand(userId, request.refreshToken()));
+    authUseCase.logout(new LogoutCommand(userDetails.getUserId(), request.refreshToken()));
   }
 
   @PostMapping(Routes.AUTH_PROVIDER_LINK)
   public void linkProvider(
-      @RequestHeader(name = "X-USER-ID", required = false) Long userId,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody LinkProviderRequest request) {
-    authUseCase.linkProvider(request.toCommand(userId));
+    authUseCase.linkProvider(request.toCommand(userDetails.getUserId()));
   }
 
+  // 로그아웃이랑 형식 같아서 일단 같이 사용
   public record ReissueTokenRequest(String refreshToken) {
     ReissueTokenCommand toCommand() {
       return new ReissueTokenCommand(refreshToken);
