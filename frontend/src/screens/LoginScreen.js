@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, Alert, StatusBar, Platform, TouchableOpacity } from 'react-native';
 import SocialLoginButton from '../components/SocialLoginButton';
+import { colors } from '../theme/colors';
 
 export default function LoginScreen({ navigation }) {
   const handleLogin = (provider) => {
@@ -12,7 +13,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0A0A0C" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.main} />
 
       {/* 타이틀 */}
       <View style={styles.titleContainer}>
@@ -38,7 +39,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0C',
+    backgroundColor: colors.background.main,
     paddingHorizontal: 28,
     justifyContent: 'center',
   },
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
-    color: '#FFFFFF',
+    color: colors.text.primary,
     fontSize: 40,
     fontWeight: '900',
     letterSpacing: -0.5,

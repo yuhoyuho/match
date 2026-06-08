@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import { colors } from '../theme/colors';
+
 export default function LandingScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0A0A0C" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.main} />
 
       {/* 중앙 정렬된 브랜드 및 액션 콘텐츠 영역 */}
       <View style={styles.contentContainer}>
@@ -34,7 +36,7 @@ export default function LandingScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0C', // 뒷 배경 (베이스 검정)
+    backgroundColor: colors.background.main, // 뒷 배경 (베이스 검정)
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 28,
@@ -48,17 +50,17 @@ const styles = StyleSheet.create({
     marginBottom: 36,
   },
   logoText: {
-    color: '#FFFFFF',
+    color: colors.text.primary,
     fontSize: 40,
     fontWeight: '900',
     letterSpacing: -0.5,
     marginBottom: 12,
   },
   plusText: {
-    color: '#ffffffff',
+    color: colors.text.primary,
   },
   tagline: {
-    color: '#9E9EAF',
+    color: colors.text.secondary,
     fontSize: 16,
     lineHeight: 24,
     textAlign: 'center',
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.button.primary,
     width: '100%',
     height: 52,
     borderRadius: 12,
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   buttonText: {
-    color: '#0A0A0C',
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700',
   },

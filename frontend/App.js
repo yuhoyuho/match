@@ -1,16 +1,16 @@
 import 'react-native-gesture-handler';
-import React from 'react';
 import { StyleSheet, View, Platform, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LandingScreen from './src/screens/LandingScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import { colors } from './src/theme/colors';
 
 const Stack = createStackNavigator();
 
 function AppNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: '#0A0A0C' } }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: colors.background.main } }}>
       <Stack.Screen name="Landing" component={LandingScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
     </Stack.Navigator>
@@ -40,9 +40,10 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  // 웹 관련 - 전부 임시
   webWrapper: {
     flex: 1,
-    backgroundColor: '#1C1C1E', // 데스크톱 웹 배경색
+    backgroundColor: colors.background.webWrapper,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({
@@ -57,8 +58,8 @@ const styles = StyleSheet.create({
     height: 840,
     borderRadius: 40,
     borderWidth: 12,
-    borderColor: '#2C2C2E', // 스마트폰 베젤 느낌의 경계선
-    backgroundColor: '#0A0A0C',
+    borderColor: colors.background.webBorder,
+    backgroundColor: colors.background.main,
     overflow: 'hidden',
     ...Platform.select({
       web: {
@@ -68,6 +69,6 @@ const styles = StyleSheet.create({
   },
   appContainer: {
     flex: 1,
-    backgroundColor: '#0A0A0C',
+    backgroundColor: colors.background.main,
   },
 });
