@@ -1,5 +1,7 @@
 package com.realmatch.backend.user.application.port.in;
 
+import com.realmatch.backend.user.domain.model.User;
+
 /** 회원/사용자정보 입력 포트입니다. TODO: 내 정보, 프로필, 선호 조건 조회/수정 유스케이스를 구현합니다. */
 public interface UserUseCase {
 
@@ -36,7 +38,17 @@ public interface UserUseCase {
       Boolean allowRandomCall) {}
 
   record UserInfoResult(
-      Long userId, String nickname, String email, String status, boolean profileCompleted) {}
+      Long userId, String nickname, String email, String status, boolean profileCompleted) {
+    public static UserInfoResult from(User user) {
+      return new UserInfoResult(
+              user.getUserId(),
+              user.getNickname(),
+              user.getEmail(),
+              user.getStatus(),
+              user.isProfileCompleted()
+      );
+    }
+  }
 
   record ProfileResult(
       Long userId,

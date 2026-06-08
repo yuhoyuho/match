@@ -8,7 +8,7 @@ CREATE TABLE users (
     email VARCHAR(255),
     phone_number VARCHAR(30),
     gender VARCHAR(20),
-    birth_year SMALLINT,
+    birth_year INTEGER,
     is_profile_completed BOOLEAN NOT NULL DEFAULT FALSE,
     last_login_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

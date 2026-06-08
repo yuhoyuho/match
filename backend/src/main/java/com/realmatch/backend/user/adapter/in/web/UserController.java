@@ -1,6 +1,7 @@
 package com.realmatch.backend.user.adapter.in.web;
 
 import com.realmatch.backend.common.Routes;
+import com.realmatch.backend.config.security.CustomUserDetails;
 import com.realmatch.backend.user.application.port.in.UserUseCase;
 import com.realmatch.backend.user.application.port.in.UserUseCase.PreferenceResult;
 import com.realmatch.backend.user.application.port.in.UserUseCase.ProfileResult;
@@ -9,6 +10,7 @@ import com.realmatch.backend.user.application.port.in.UserUseCase.UpdatePreferen
 import com.realmatch.backend.user.application.port.in.UserUseCase.UpdateProfileCommand;
 import com.realmatch.backend.user.application.port.in.UserUseCase.UserInfoResult;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,41 +25,39 @@ public class UserController {
   private final UserUseCase userUseCase;
 
   @GetMapping(Routes.USERS_ME)
-  public UserInfoResult getMe(@RequestHeader(name = "X-USER-ID", required = false) Long userId) {
-    return userUseCase.getMe(userId);
+  public UserInfoResult getMe(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    return userUseCase.getMe(userDetails.getUserId());
   }
 
   @PatchMapping(Routes.USERS_ME)
   public UserInfoResult updateMe(
-      @RequestHeader(name = "X-USER-ID", required = false) Long userId,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody BasicInfoRequest request) {
-    return userUseCase.updateBasicInfo(request.toCommand(userId));
+    return userUseCase.updateBasicInfo(request.toCommand(userDetails.getUserId()));
   }
 
   @GetMapping(Routes.USERS_ME_PROFILE)
-  public ProfileResult getProfile(
-      @RequestHeader(name = "X-USER-ID", required = false) Long userId) {
-    return userUseCase.getProfile(userId);
+  public ProfileResult getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    return userUseCase.getProfile(userDetails.getUserId());
   }
 
   @PatchMapping(Routes.USERS_ME_PROFILE)
   public ProfileResult updateProfile(
-      @RequestHeader(name = "X-USER-ID", required = false) Long userId,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody ProfileRequest request) {
-    return userUseCase.updateProfile(request.toCommand(userId));
+    return userUseCase.updateProfile(request.toCommand(userDetails.getUserId()));
   }
 
   @GetMapping(Routes.USERS_ME_PREFERENCES)
-  public PreferenceResult getPreference(
-      @RequestHeader(name = "X-USER-ID", required = false) Long userId) {
-    return userUseCase.getPreference(userId);
+  public PreferenceResult getPreference(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    return userUseCase.getPreference(userDetails.getUserId());
   }
 
   @PatchMapping(Routes.USERS_ME_PREFERENCES)
   public PreferenceResult updatePreference(
-      @RequestHeader(name = "X-USER-ID", required = false) Long userId,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody PreferenceRequest request) {
-    return userUseCase.updatePreference(request.toCommand(userId));
+    return userUseCase.updatePreference(request.toCommand(userDetails.getUserId()));
   }
 
   public record BasicInfoRequest(

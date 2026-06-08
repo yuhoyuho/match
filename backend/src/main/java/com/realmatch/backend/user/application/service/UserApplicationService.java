@@ -2,9 +2,12 @@ package com.realmatch.backend.user.application.service;
 
 import com.realmatch.backend.user.application.port.in.UserUseCase;
 import com.realmatch.backend.user.application.port.out.UserPersistencePort;
+import com.realmatch.backend.user.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.NoSuchElementException;
 
 /** 회원 유스케이스 구현체입니다. TODO: 기본 정보, 프로필 완성 여부, 선호 조건 유효성 검증을 구현합니다. */
 @Service
@@ -16,7 +19,11 @@ public class UserApplicationService implements UserUseCase {
 
   @Override
   public UserInfoResult getMe(Long userId) {
-    throw new UnsupportedOperationException("TODO: 내 기본 정보를 조회합니다.");
+
+    User findUser = userPersistencePort.findUser(userId)
+            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 ID입니다."));
+
+    return UserInfoResult.from(findUser);
   }
 
   @Override

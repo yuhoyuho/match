@@ -10,6 +10,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
 /**
  * users 테이블과 매핑되는 JPA 엔티티
  */
@@ -24,11 +27,41 @@ public class UserJpaEntity {
   @Column(name = "user_id")
   private Long userId;
 
+  @Column(name = "user_uuid")
+  private UUID userUUID;
+
+  @Column(name = "status")
+  private String status;
+
   @Column(name = "email")
   private String email;
 
   @Column(name = "nickname")
   private String nickname;
+
+  @Column(name = "phone_number")
+  private String phoneNumber;
+
+  @Column(name = "gender")
+  private String gender;
+
+  @Column(name = "birth_year")
+  private Integer birthYear;
+
+  @Column(name = "is_profile_completed", nullable = false)
+  private boolean profileCompleted;
+
+  @Column(name = "last_login_at")
+  private OffsetDateTime lastLoginAt;
+
+  @Column(name = "created_at")
+  private OffsetDateTime createdAt;
+
+  @Column(name = "updated_at")
+  private OffsetDateTime updatedAt;
+
+  @Column(name = "deleted_at")
+  private OffsetDateTime deletedAt;
 
   public UserJpaEntity(String email, String nickname) {
     this.email = email;
@@ -36,6 +69,16 @@ public class UserJpaEntity {
   }
 
   public static UserJpaEntity createForOAuth(String email, String nickname) {
-    return new UserJpaEntity(email, nickname);
+    UserJpaEntity user = new UserJpaEntity();
+
+    user.userUUID = UUID.randomUUID();
+    user.email = email;
+    user.nickname = nickname;
+    user.status = "ACTIVE";
+    user.profileCompleted = false;
+    user.createdAt = OffsetDateTime.now();
+    user.updatedAt = OffsetDateTime.now();
+
+    return user;
   }
 }

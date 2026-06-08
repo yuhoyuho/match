@@ -4,6 +4,8 @@ import com.realmatch.backend.user.application.port.out.UserPersistencePort;
 import com.realmatch.backend.user.domain.model.User;
 import com.realmatch.backend.user.domain.model.UserPreference;
 import com.realmatch.backend.user.domain.model.UserProfile;
+
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,8 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
   @Override
   public Optional<User> findUser(Long userId) {
-    throw new UnsupportedOperationException("TODO: 회원을 조회합니다.");
+    return userJpaRepository.findById(userId)
+            .map(this::toDomain);
   }
 
   @Override
@@ -45,5 +48,23 @@ public class UserPersistenceAdapter implements UserPersistencePort {
   @Override
   public UserPreference savePreference(UserPreference preference) {
     throw new UnsupportedOperationException("TODO: 선호 조건을 저장합니다.");
+  }
+
+  private User toDomain(UserJpaEntity entity) {
+    return new User(
+            entity.getUserId(),
+            entity.getUserUUID(),
+            entity.getStatus(),
+            entity.getNickname(),
+            entity.getEmail(),
+            entity.getPhoneNumber(),
+            entity.getGender(),
+            entity.getBirthYear(),
+            entity.isProfileCompleted(),
+            entity.getLastLoginAt(),
+            entity.getCreatedAt(),
+            entity.getUpdatedAt(),
+            entity.getDeletedAt()
+    );
   }
 }
