@@ -1,13 +1,30 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { StyleSheet, View, Platform, SafeAreaView } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import LandingScreen from './src/screens/LandingScreen';
+import LoginScreen from './src/screens/LoginScreen';
+
+const Stack = createStackNavigator();
+
+function AppNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: '#0A0A0C' } }}>
+      <Stack.Screen name="Landing" component={LandingScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
   if (Platform.OS === 'web') {
     return (
       <View style={styles.webWrapper}>
         <View style={styles.webDeviceFrame}>
-          <LandingScreen />
+          <NavigationContainer>
+            <AppNavigator />
+          </NavigationContainer>
         </View>
       </View>
     );
@@ -15,7 +32,9 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.appContainer}>
-      <LandingScreen />
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
@@ -26,7 +45,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C1C1E', // 데스크톱 웹 배경색
     justifyContent: 'center',
     alignItems: 'center',
-    // 웹 뷰포트 크기에 맞춰 정렬
     ...Platform.select({
       web: {
         width: '100vw',
@@ -42,7 +60,6 @@ const styles = StyleSheet.create({
     borderColor: '#2C2C2E', // 스마트폰 베젤 느낌의 경계선
     backgroundColor: '#0A0A0C',
     overflow: 'hidden',
-    // 웹 전용 브라우저 섀도우 효과
     ...Platform.select({
       web: {
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)'
