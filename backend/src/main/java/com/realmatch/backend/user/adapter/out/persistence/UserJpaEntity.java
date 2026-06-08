@@ -1,17 +1,17 @@
 package com.realmatch.backend.user.adapter.out.persistence;
 
+import com.realmatch.backend.user.domain.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.OffsetDateTime;
-import java.util.UUID;
 
 /**
  * users 테이블과 매핑되는 JPA 엔티티
@@ -80,5 +80,25 @@ public class UserJpaEntity {
     user.updatedAt = OffsetDateTime.now();
 
     return user;
+  }
+
+  public static UserJpaEntity from(User user) {
+    UserJpaEntity entity = new UserJpaEntity();
+
+    entity.userId = user.getUserId();
+    entity.userUUID = user.getUserUUID();
+    entity.status = user.getStatus();
+    entity.email = user.getEmail();
+    entity.nickname = user.getNickname();
+    entity.phoneNumber = user.getPhoneNumber();
+    entity.gender = user.getGender();
+    entity.birthYear = user.getBirthYear();
+    entity.profileCompleted = user.isProfileCompleted();
+    entity.lastLoginAt = user.getLastLoginAt();
+    entity.createdAt = user.getCreatedAt();
+    entity.updatedAt = user.getUpdatedAt();
+    entity.deletedAt = user.getDeletedAt();
+
+    return entity;
   }
 }

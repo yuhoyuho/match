@@ -5,12 +5,11 @@ import com.realmatch.backend.user.domain.model.User;
 import com.realmatch.backend.user.domain.model.UserPreference;
 import com.realmatch.backend.user.domain.model.UserProfile;
 
-import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/** 회원 Persistence Adapter입니다. TODO: UserPersistencePort와 JPA Repository 사이의 매핑을 구현합니다. */
+/** 회원 Persistence Adapter\ */
 @Component
 @RequiredArgsConstructor
 public class UserPersistenceAdapter implements UserPersistencePort {
@@ -27,27 +26,33 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
   @Override
   public User saveUser(User user) {
-    throw new UnsupportedOperationException("TODO: 회원을 저장합니다.");
+    UserJpaEntity entity = UserJpaEntity.from(user);
+    UserJpaEntity savedEntity = userJpaRepository.save(entity);
+    return toDomain(savedEntity);
   }
 
   @Override
   public Optional<UserProfile> findProfile(Long userId) {
-    throw new UnsupportedOperationException("TODO: 프로필을 조회합니다.");
+    return userProfileJpaRepository.findById(userId).map(this::toDomain);
   }
 
   @Override
   public UserProfile saveProfile(UserProfile profile) {
-    throw new UnsupportedOperationException("TODO: 프로필을 저장합니다.");
+    UserProfileJpaEntity entity = UserProfileJpaEntity.from(profile);
+    UserProfileJpaEntity savedEntity = userProfileJpaRepository.save(entity);
+    return toDomain(savedEntity);
   }
 
   @Override
   public Optional<UserPreference> findPreference(Long userId) {
-    throw new UnsupportedOperationException("TODO: 선호 조건을 조회합니다.");
+    return userPreferenceJpaRepository.findById(userId).map(this::toDomain);
   }
 
   @Override
   public UserPreference savePreference(UserPreference preference) {
-    throw new UnsupportedOperationException("TODO: 선호 조건을 저장합니다.");
+    UserPreferenceJpaEntity entity = UserPreferenceJpaEntity.from(preference);
+    UserPreferenceJpaEntity savedEntity = userPreferenceJpaRepository.save(entity);
+    return toDomain(savedEntity);
   }
 
   private User toDomain(UserJpaEntity entity) {
@@ -66,5 +71,34 @@ public class UserPersistenceAdapter implements UserPersistencePort {
             entity.getUpdatedAt(),
             entity.getDeletedAt()
     );
+  }
+
+  private UserProfile toDomain(UserProfileJpaEntity entity) {
+    return new UserProfile(
+        entity.getUserId(),
+        toInteger(entity.getHeightCm()),
+        entity.getJobTitle(),
+        entity.getEducationLevel(),
+        entity.getMbti(),
+        entity.getIntroduction(),
+        entity.getRegionCode(),
+        entity.getCreatedAt(),
+        entity.getUpdatedAt());
+  }
+
+  private UserPreference toDomain(UserPreferenceJpaEntity entity) {
+    return new UserPreference(
+        entity.getUserId(),
+        entity.getPreferredGender(),
+        toInteger(entity.getPreferredAgeMin()),
+        toInteger(entity.getPreferredAgeMax()),
+        entity.getPreferredRegionCode(),
+        entity.isAllowRandomCall(),
+        entity.getCreatedAt(),
+        entity.getUpdatedAt());
+  }
+
+  private Integer toInteger(Short value) {
+    return value == null ? null : value.intValue();
   }
 }
