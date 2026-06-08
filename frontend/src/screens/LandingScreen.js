@@ -27,6 +27,14 @@ export default function LandingScreen({ navigation }) {
           >
             <Text style={styles.buttonText}>시작하기</Text>
           </TouchableOpacity>
+
+          {/* 개발용 로그인 - 메인 페이지로 이동 */}
+          <TouchableOpacity
+            style={styles.devButton}
+            onPress={() => navigation.navigate('Main')}
+          >
+            <Text style={styles.devButtonText}>[개발용] 메인페이지로</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -90,5 +98,14 @@ const styles = StyleSheet.create({
     color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700',
+  },
+  devButton: {
+    marginTop: 16,
+    padding: 10,
+  },
+  devButtonText: {
+    color: colors.text.secondary,
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
 });
