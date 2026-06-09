@@ -2,7 +2,7 @@ package com.realmatch.backend.community.application.port.in;
 
 import java.util.List;
 
-/** 커뮤니티 입력 포트입니다. TODO: 게시글 목록/상세, 작성, 댓글, 좋아요, 신고 유스케이스를 구현합니다. */
+/** 커뮤니티 입력 포트 */
 public interface CommunityUseCase {
 
   List<PostResult> getPosts(PostQuery query);
@@ -17,7 +17,7 @@ public interface CommunityUseCase {
 
   void report(ReportCommand command);
 
-  record PostQuery(Long userId, Long categoryId, String sort, int size) {}
+  record PostQuery(Long userId, Long categoryId, Long cursor, int size) {}
 
   record CreatePostCommand(Long userId, Long categoryId, String title, String body) {}
 

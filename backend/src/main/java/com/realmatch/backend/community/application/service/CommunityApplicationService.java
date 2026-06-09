@@ -3,28 +3,43 @@ package com.realmatch.backend.community.application.service;
 import com.realmatch.backend.community.application.port.in.CommunityUseCase;
 import com.realmatch.backend.community.application.port.out.CommunityCachePort;
 import com.realmatch.backend.community.application.port.out.CommunityPersistencePort;
+import com.realmatch.backend.community.domain.model.CommunityPost;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 커뮤니티 유스케이스 구현체입니다. TODO: 목록 제외 조건, 작성 제한, 좋아요 idempotency, 신고 접수를 구현합니다. */
+/** 커뮤니티 유스케이스 구현체 */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommunityApplicationService implements CommunityUseCase {
+
+  private static final int DEFAULT_PAGE_SIZE = 20;
+  private static final int MAX_PAGE_SIZE = 20;
 
   private final CommunityPersistencePort communityPersistencePort;
   private final CommunityCachePort communityCachePort;
 
   @Override
   public List<PostResult> getPosts(PostQuery query) {
-    throw new UnsupportedOperationException("TODO: 게시글 목록을 조회합니다.");
+    int size = normalizeSize(query.size());
+
+    return communityPersistencePort.findPosts(query.categoryId(), query.cursor(), size)
+            .stream()
+            .map(this::toPostResult)
+            .toList();
   }
 
   @Override
   public PostResult getPost(Long userId, Long postId) {
-    throw new UnsupportedOperationException("TODO: 게시글 상세를 조회합니다.");
+    CommunityPost post = communityPersistencePort.findPost(postId)
+            .orElseThrow(() -> new NoSuchElementException("게시글이 존재하지 않습니다."));
+
+    // TODO: 조회 수 증가 기능 필요
+    return toPostResult(post);
   }
 
   @Override
@@ -42,12 +57,30 @@ public class CommunityApplicationService implements CommunityUseCase {
   @Override
   @Transactional
   public void likePost(Long userId, Long postId) {
-    throw new UnsupportedOperationException("TODO: 좋아요를 처리합니다.");
+    communityPersistencePort.likePost(userId, postId);
   }
 
   @Override
   @Transactional
   public void report(ReportCommand command) {
     throw new UnsupportedOperationException("TODO: 신고를 접수합니다.");
+  }
+
+  private int normalizeSize(int size) {
+    if (size <= 0) {
+      return DEFAULT_PAGE_SIZE;
+    }
+    return Math.min(size, MAX_PAGE_SIZE);
+  }
+
+  private PostResult toPostResult(CommunityPost post) {
+    return new PostResult(
+        post.getPostId(),
+        post.getAuthorId(),
+        post.getTitle(),
+        post.getBody(),
+        post.getStatus(),
+        post.getLikeCount(),
+        post.getCommentCount());
   }
 }

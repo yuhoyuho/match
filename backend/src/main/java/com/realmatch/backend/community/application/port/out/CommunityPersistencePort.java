@@ -8,7 +8,7 @@ import java.util.Optional;
 /** 커뮤니티 영속성 출력 포트입니다. TODO: 게시글, 댓글, 좋아요, 신고, 숨김, 활동 로그 저장/조회를 구현합니다. */
 public interface CommunityPersistencePort {
 
-  List<CommunityPost> findPosts(Long categoryId, String sort, int size);
+  List<CommunityPost> findPosts(Long categoryId, Long cursor, int size);
 
   Optional<CommunityPost> findPost(Long postId);
 

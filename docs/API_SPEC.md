@@ -923,7 +923,8 @@ Response:
 ### 9.1 게시글 목록 조회
 
 ```http
-GET /api/v1/community/posts?categoryId=1&sort=LATEST&size=20
+GET /api/v1/community/posts?categoryId=1&size=20
+GET /api/v1/community/posts?categoryId=1&cursor=120&size=20
 ```
 
 Response `200 OK`:
@@ -944,7 +945,9 @@ Response `200 OK`:
 
 구현 메모:
 
-- `sort` 후보값은 `LATEST`, `POPULAR` 정도로 시작하고 구현 시 확정합니다.
+- 앱 무한스크롤 기준으로 `size` 기본값은 `20`입니다.
+- 첫 페이지는 `cursor` 없이 요청하고, 다음 페이지부터는 마지막 게시글의 `postId`를 `cursor`로 전달합니다.
+- 정렬은 서버에서 최신순 내림차순으로 고정합니다.
 - 숨김/삭제된 게시글은 기본 목록에서 제외합니다.
 
 ### 9.2 게시글 상세 조회
