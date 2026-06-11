@@ -595,7 +595,8 @@ Response `200 OK`:
 ### 6.2 메시지 목록 조회
 
 ```http
-GET /api/v1/chat/rooms/{roomId}/messages
+GET /api/v1/chat/rooms/{roomId}/messages?size=20
+GET /api/v1/chat/rooms/{roomId}/messages?cursor=100&size=20
 ```
 
 Response `200 OK`:
@@ -615,7 +616,9 @@ Response `200 OK`:
 
 구현 메모:
 
-- 현재는 커서 파라미터가 없으므로 구현 시 `cursor`, `size` 추가를 권장합니다.
+- 앱 무한스크롤 기준으로 `size` 기본값은 `20`입니다.
+- 첫 페이지는 `cursor` 없이 요청하고, 다음 페이지부터는 현재 목록에서 가장 오래된 `messageId`를 `cursor`로 전달합니다.
+- 서버 조회 정렬은 최신순 내림차순 기준입니다.
 
 ### 6.3 메시지 전송
 

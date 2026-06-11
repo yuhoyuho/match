@@ -3,10 +3,12 @@ package com.realmatch.backend.chat.adapter.out.persistence;
 import com.realmatch.backend.chat.application.port.out.ChatPersistencePort;
 import com.realmatch.backend.chat.domain.model.ChatMessage;
 import com.realmatch.backend.chat.domain.model.ChatRoom;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 /** 채팅 Persistence Adapter입니다. TODO: 채팅방/메시지/읽음 상태 저장과 unread count 계산을 구현합니다. */
 @Component
@@ -15,20 +17,28 @@ public class ChatPersistenceAdapter implements ChatPersistencePort {
 
   private final ChatRoomJpaRepository chatRoomJpaRepository;
   private final ChatMessageJpaRepository chatMessageJpaRepository;
+  private final ChatRoomMemberJpaRepository chatRoomMemberJpaRepository;
+  private final ChatReadStatusJpaRepository chatReadStatusJpaRepository;
 
   @Override
   public List<ChatRoom> findRooms(Long userId) {
-    throw new UnsupportedOperationException("TODO: 내 채팅방 목록을 조회합니다.");
+    return chatRoomJpaRepository.findRoomsByMemberId(userId)
+            .stream()
+            .map(entity -> toDomain(entity, 0))
+            .toList();
   }
 
   @Override
   public Optional<ChatRoom> findRoom(Long roomId) {
-    throw new UnsupportedOperationException("TODO: 채팅방을 조회합니다.");
+    return chatRoomJpaRepository.findById(roomId)
+            .map(entity -> toDomain(entity, 0));
   }
 
   @Override
-  public List<ChatMessage> findMessages(Long roomId, int size) {
-    throw new UnsupportedOperationException("TODO: 메시지 목록을 조회합니다.");
+  public List<ChatMessage> findMessages(Long roomId, Long cursor, int size) {
+    return chatMessageJpaRepository.findMessages(roomId, cursor, PageRequest.of(0, size)).stream()
+        .map(this::toDomain)
+        .toList();
   }
 
   @Override
@@ -39,5 +49,29 @@ public class ChatPersistenceAdapter implements ChatPersistencePort {
   @Override
   public void saveReadStatus(Long userId, Long roomId, Long lastReadMessageId) {
     throw new UnsupportedOperationException("TODO: 읽음 상태를 저장합니다.");
+  }
+
+  private ChatMessage toDomain(ChatMessageJpaEntity entity) {
+    return new ChatMessage(
+        entity.getMessageId(),
+        entity.getRoomId(),
+        entity.getSenderId(),
+        entity.getMessageType(),
+        entity.getContent(),
+        entity.getStatus(),
+        entity.getCreatedAt(),
+        entity.getDeliveredAt());
+  }
+
+  private ChatRoom toDomain(ChatRoomJpaEntity entity, int unreadCount) {
+    return new ChatRoom(
+            entity.getRoomId(),
+            entity.getMatchId(),
+            entity.getRoomType(),
+            entity.getStatus(),
+            entity.getCreatedAt(),
+            entity.getClosedAt(),
+            unreadCount
+    );
   }
 }

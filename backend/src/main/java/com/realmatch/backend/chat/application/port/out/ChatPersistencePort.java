@@ -12,7 +12,7 @@ public interface ChatPersistencePort {
 
   Optional<ChatRoom> findRoom(Long roomId);
 
-  List<ChatMessage> findMessages(Long roomId, int size);
+  List<ChatMessage> findMessages(Long roomId, Long cursor, int size);
 
   ChatMessage saveMessage(ChatMessage message);
 

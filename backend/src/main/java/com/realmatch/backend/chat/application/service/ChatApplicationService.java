@@ -4,6 +4,9 @@ import com.realmatch.backend.chat.application.port.in.ChatUseCase;
 import com.realmatch.backend.chat.application.port.out.ChatPersistencePort;
 import com.realmatch.backend.chat.application.port.out.ChatRealtimePort;
 import java.util.List;
+
+import com.realmatch.backend.chat.domain.model.ChatMessage;
+import com.realmatch.backend.chat.domain.model.ChatRoom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +22,18 @@ public class ChatApplicationService implements ChatUseCase {
 
   @Override
   public List<ChatRoomResult> getRooms(Long userId) {
-    throw new UnsupportedOperationException("TODO: 채팅방 목록을 조회합니다.");
+    return chatPersistencePort.findRooms(userId)
+            .stream()
+            .map(this::toChatRoomResult)
+            .toList();
   }
 
   @Override
-  public List<ChatMessageResult> getMessages(Long userId, Long roomId) {
-    throw new UnsupportedOperationException("TODO: 채팅 메시지를 조회합니다.");
+  public List<ChatMessageResult> getMessages(Long userId, Long roomId, Long cursor, int size) {
+    return chatPersistencePort.findMessages(roomId, cursor, size)
+            .stream()
+            .map(this::toChatMessageResult)
+            .toList();
   }
 
   @Override
@@ -43,5 +52,25 @@ public class ChatApplicationService implements ChatUseCase {
   @Transactional
   public void closeRoom(Long userId, Long roomId) {
     throw new UnsupportedOperationException("TODO: 채팅방 종료를 구현합니다.");
+  }
+
+  private ChatMessageResult toChatMessageResult(ChatMessage chat) {
+    return new ChatMessageResult(
+            chat.getMessageId(),
+            chat.getRoomId(),
+            chat.getSenderId(),
+            chat.getMessageType(),
+            chat.getContent(),
+            chat.getStatus()
+    );
+  }
+
+  private ChatRoomResult toChatRoomResult(ChatRoom room) {
+    return new ChatRoomResult(
+            room.getRoomId(),
+            room.getMatchId(),
+            room.getStatus(),
+            room.getUnreadCount()
+    );
   }
 }

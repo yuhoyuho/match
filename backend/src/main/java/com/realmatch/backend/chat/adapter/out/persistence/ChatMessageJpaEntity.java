@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.realmatch.backend.chat.domain.model.ChatMessage;
+import java.time.OffsetDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +27,38 @@ public class ChatMessageJpaEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "message_id")
   private Long messageId;
+
+  @Column(name = "room_id", nullable = false)
+  private Long roomId;
+
+  @Column(name = "sender_id", nullable = false)
+  private Long senderId;
+
+  @Column(name = "message_type", nullable = false)
+  private String messageType;
+
+  @Column(name = "content", nullable = false)
+  private String content;
+
+  @Column(name = "status", nullable = false)
+  private String status;
+
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
+
+  @Column(name = "delivered_at")
+  private OffsetDateTime deliveredAt;
+
+  public static ChatMessageJpaEntity from(ChatMessage message) {
+    ChatMessageJpaEntity entity = new ChatMessageJpaEntity();
+    entity.messageId = message.getMessageId();
+    entity.roomId = message.getRoomId();
+    entity.senderId = message.getSenderId();
+    entity.messageType = message.getMessageType();
+    entity.content = message.getContent();
+    entity.status = message.getStatus();
+    entity.createdAt = message.getCreatedAt();
+    entity.deliveredAt = message.getDeliveredAt();
+    return entity;
+  }
 }

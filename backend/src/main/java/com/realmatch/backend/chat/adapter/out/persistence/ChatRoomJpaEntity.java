@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.OffsetDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,19 @@ public class ChatRoomJpaEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "room_id")
   private Long roomId;
+
+  @Column(name = "match_id", nullable = false)
+  private Long matchId;
+
+  @Column(name = "room_type", nullable = false)
+  private String roomType;
+
+  @Column(name = "status", nullable = false)
+  private String status;
+
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
+
+  @Column(name = "closed_at")
+  private OffsetDateTime closedAt;
 }

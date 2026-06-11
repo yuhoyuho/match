@@ -7,7 +7,7 @@ public interface ChatUseCase {
 
   List<ChatRoomResult> getRooms(Long userId);
 
-  List<ChatMessageResult> getMessages(Long userId, Long roomId);
+  List<ChatMessageResult> getMessages(Long userId, Long roomId, Long cursor, int size);
 
   ChatMessageResult sendMessage(SendMessageCommand command);
 
