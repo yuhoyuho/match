@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-/** ChatRoomJpaEntity 전용 Spring Data JPA 저장소입니다. TODO: PersistencePort가 요구하는 조회 메서드를 추가합니다. */
+/** ChatRoomJpaEntity 전용 Spring Data JPA 저장소 */
 @Repository
 public interface ChatRoomJpaRepository extends JpaRepository<ChatRoomJpaEntity, Long> {
 

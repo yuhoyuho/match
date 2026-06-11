@@ -2,7 +2,7 @@ package com.realmatch.backend.chat.application.port.in;
 
 import java.util.List;
 
-/** 채팅 입력 포트입니다. TODO: 채팅방 목록/상세, 메시지 전송, 읽음 처리, 종료 유스케이스를 구현합니다. */
+/** 채팅 입력 포트 */
 public interface ChatUseCase {
 
   List<ChatRoomResult> getRooms(Long userId);

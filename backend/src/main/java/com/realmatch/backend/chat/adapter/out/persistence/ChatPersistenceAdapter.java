@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-/** 채팅 Persistence Adapter입니다. TODO: 채팅방/메시지/읽음 상태 저장과 unread count 계산을 구현합니다. */
+/** 채팅 Persistence Adapter */
 @Component
 @RequiredArgsConstructor
 public class ChatPersistenceAdapter implements ChatPersistencePort {
@@ -43,12 +43,19 @@ public class ChatPersistenceAdapter implements ChatPersistencePort {
 
   @Override
   public ChatMessage saveMessage(ChatMessage message) {
-    throw new UnsupportedOperationException("TODO: 메시지를 저장합니다.");
+    ChatMessageJpaEntity savedMessage = chatMessageJpaRepository.save(ChatMessageJpaEntity.from(message));
+
+    return toDomain(savedMessage);
   }
 
   @Override
   public void saveReadStatus(Long userId, Long roomId, Long lastReadMessageId) {
     throw new UnsupportedOperationException("TODO: 읽음 상태를 저장합니다.");
+  }
+
+  @Override
+  public boolean existsRoomMember(Long roomId, Long userId) {
+    return chatRoomMemberJpaRepository.existsByRoomIdAndUserIdAndLeftAtIsNull(roomId, userId);
   }
 
   private ChatMessage toDomain(ChatMessageJpaEntity entity) {

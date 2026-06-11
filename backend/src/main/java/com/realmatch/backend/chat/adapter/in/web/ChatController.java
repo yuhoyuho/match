@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 채팅 Web Adapter입니다. TODO: 채팅방 권한, 메시지 입력값, 읽음 처리 idempotency 검증을 구현합니다. */
+/** 채팅 Web Adapter */
 @RestController
 @RequiredArgsConstructor
 public class ChatController {

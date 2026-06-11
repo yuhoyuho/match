@@ -10,6 +10,6 @@ public class ChatRealtimeAdapter implements ChatRealtimePort {
 
   @Override
   public void publish(ChatMessage message) {
-    throw new UnsupportedOperationException("TODO: 메시지를 상대 사용자 세션으로 전달합니다.");
+    // TODO : WebSocket or Redis Pub/Sub 실시간 전달 구현
   }
 }

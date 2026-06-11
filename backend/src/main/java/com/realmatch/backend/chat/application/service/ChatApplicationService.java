@@ -3,7 +3,10 @@ package com.realmatch.backend.chat.application.service;
 import com.realmatch.backend.chat.application.port.in.ChatUseCase;
 import com.realmatch.backend.chat.application.port.out.ChatPersistencePort;
 import com.realmatch.backend.chat.application.port.out.ChatRealtimePort;
+
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.realmatch.backend.chat.domain.model.ChatMessage;
 import com.realmatch.backend.chat.domain.model.ChatRoom;
@@ -11,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 채팅 유스케이스 구현체입니다. TODO: 메시지 저장, 실시간 전달, 읽음 처리, 채팅방 상태 검증을 구현합니다. */
+/** 채팅 유스케이스 구현체 */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,7 +42,29 @@ public class ChatApplicationService implements ChatUseCase {
   @Override
   @Transactional
   public ChatMessageResult sendMessage(SendMessageCommand command) {
-    throw new UnsupportedOperationException("TODO: 메시지 저장 후 실시간 전달을 구현합니다.");
+    ChatRoom room = chatPersistencePort.findRoom(command.roomId())
+            .orElseThrow(() -> new NoSuchElementException("채팅방을 찾을 수 없습니다."));
+
+    if(!chatPersistencePort.existsRoomMember(command.roomId(), command.userId())) {
+      throw new IllegalStateException("채팅방 멤버가 아닙니다.");
+    }
+
+    if(!room.isActive()) {
+      throw new IllegalStateException("종료된 채팅방입니다.");
+    }
+
+    ChatMessage message = ChatMessage.create(
+            command.roomId(),
+            command.userId(),
+            command.messageType(),
+            command.content(),
+            OffsetDateTime.now()
+    );
+
+    ChatMessage savedMessage = chatPersistencePort.saveMessage(message);
+    chatRealtimePort.publish(savedMessage);
+
+    return toChatMessageResult(savedMessage);
   }
 
   @Override
