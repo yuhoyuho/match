@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.background.main} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.main} />
 
       {/* 타이틀 */}
       <View style={styles.titleContainer}>

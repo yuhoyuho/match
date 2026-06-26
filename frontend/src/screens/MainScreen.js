@@ -19,15 +19,16 @@ export default function MainScreen() {
         headerShown: false,
         tabBarShowLabel: false, // 하단바 텍스트 라벨 숨기기
         tabBarStyle: {
-          backgroundColor: '#151517',
-          borderTopWidth: 0,
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 1,
+          borderTopColor: colors.background.webWrapper,
           elevation: 0,
           height: 64,
           paddingBottom: 12,
           paddingTop: 8,
         },
         // 하단바 클릭 시 색상
-        tabBarActiveTintColor: '#ffffffff',
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.text.secondary,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;

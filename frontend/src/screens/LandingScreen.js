@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 export default function LandingScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.background.main} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.main} />
 
       {/* 중앙 정렬된 브랜드 및 액션 콘텐츠 영역 */}
       <View style={styles.contentContainer}>
@@ -28,12 +28,12 @@ export default function LandingScreen({ navigation }) {
             <Text style={styles.buttonText}>시작하기</Text>
           </TouchableOpacity>
 
-          {/* 개발용 로그인 - 메인 페이지로 이동 */}
+          {/* 개발용 로그인 - 온보딩 페이지로 이동 */}
           <TouchableOpacity
             style={styles.devButton}
-            onPress={() => navigation.navigate('Main')}
+            onPress={() => navigation.navigate('Onboarding')}
           >
-            <Text style={styles.devButtonText}>[개발용] 메인페이지로</Text>
+            <Text style={styles.devButtonText}>[개발용] 온보딩 이동</Text>
           </TouchableOpacity>
         </View>
       </View>
