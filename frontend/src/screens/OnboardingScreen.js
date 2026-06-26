@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Switch, Dimensions, PanResponder, Animated, Modal } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Switch, Dimensions, PanResponder, Animated, Modal, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import * as SecureStore from 'expo-secure-store';
 import { colors } from '../theme/colors';
 
 const { width } = Dimensions.get('window');
@@ -92,7 +93,8 @@ const CustomRangeSlider = ({ min, max, values, onValuesChange }) => {
   );
 };
 
-export default function OnboardingScreen({ navigation }) {
+export default function OnboardingScreen({ navigation, route }) {
+  const isDevLogin = route.params?.isDevLogin;
   const [step, setStep] = useState(0);
   const totalSteps = 5;
 
@@ -119,6 +121,7 @@ export default function OnboardingScreen({ navigation }) {
   // 이상형
   const [preferredGender, setPreferredGender] = useState(null);
   const [preferredAgeRange, setPreferredAgeRange] = useState([20, 35]); // 커스텀 슬라이더 값
+  const [preferredRegionCode, setPreferredRegionCode] = useState(null);
   const [allowRandomCall, setAllowRandomCall] = useState(true);
 
   // 전화번호 하이픈 자동 포맷팅
@@ -138,36 +141,88 @@ export default function OnboardingScreen({ navigation }) {
     if (step === 0) return nickname.trim().length >= 2 && phoneNumber.replace(/-/g, '').length >= 10 && gender;
     if (step === 1) return jobTitle && educationLevel; // 키와 MBTI는 기본값이 있으므로 무조건 통과
     if (step === 2) return regionCode && interests.length > 0 && meetingPurpose;
-    if (step === 3) return preferredGender; // 슬라이더 기본값 존재
+    if (step === 3) return preferredGender && preferredRegionCode; // 슬라이더 기본값 존재
     if (step === 4) return true;
     return false;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!isStepValid()) return;
 
     if (step < totalSteps - 1) {
       setStep(step + 1);
     } else {
-      const finalData = {
-        User: { nickname, phoneNumber: phoneNumber.replace(/-/g, ''), gender, birthYear },
-        UserProfile: {
-          heightCm,
-          jobTitle,
-          educationLevel,
-          mbti,
-          regionCode,
-          introduction: `[목적] ${meetingPurpose}\n[관심사] ${interests.join(', ')}`
-        },
-        UserPreference: {
-          preferredGender,
-          preferredAgeMin: preferredAgeRange[0],
-          preferredAgeMax: preferredAgeRange[1],
-          allowRandomCall
+      if (isDevLogin) {
+        console.log('개발용 로그인: API 호출 생략 후 메인으로 이동');
+        navigation.replace('Main');
+        return;
+      }
+
+      try {
+        const accessToken = await SecureStore.getItemAsync('accessToken');
+        if (!accessToken) {
+          Alert.alert('오류', '로그인 정보가 없습니다.');
+          return;
         }
-      };
-      console.log("=== 가입 데이터 ===", JSON.stringify(finalData, null, 2));
-      navigation.replace('Main');
+
+        const BACKEND_URL = Platform.select({
+          android: 'http://10.0.2.2:8080',
+          ios: 'http://localhost:8080',
+          default: 'http://localhost:8080',
+        });
+
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        };
+
+        // 1. 기본 정보 업데이트
+        const basicInfoRes = await fetch(`${BACKEND_URL}/api/v1/users/me`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            nickname,
+            phoneNumber: phoneNumber.replace(/-/g, ''),
+            gender,
+            birthYear
+          })
+        });
+        if (!basicInfoRes.ok) throw new Error('기본 정보 저장 실패');
+
+        // 2. 프로필 업데이트
+        const profileRes = await fetch(`${BACKEND_URL}/api/v1/users/me/profile`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            heightCm,
+            jobTitle,
+            educationLevel,
+            mbti,
+            regionCode,
+            introduction: `[목적] ${meetingPurpose}\n[관심사] ${interests.join(', ')}`
+          })
+        });
+        if (!profileRes.ok) throw new Error('프로필 정보 저장 실패');
+
+        // 3. 선호 상대 업데이트
+        const prefRes = await fetch(`${BACKEND_URL}/api/v1/users/me/preferences`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            preferredGender,
+            preferredAgeMin: preferredAgeRange[0],
+            preferredAgeMax: preferredAgeRange[1],
+            preferredRegionCode,
+            allowRandomCall
+          })
+        });
+        if (!prefRes.ok) throw new Error('선호 정보 저장 실패');
+
+        navigation.replace('Main');
+      } catch (error) {
+        console.error('온보딩 저장 오류:', error);
+        Alert.alert('오류', '정보 저장에 실패했습니다.');
+      }
     }
   };
 
@@ -279,6 +334,9 @@ export default function OnboardingScreen({ navigation }) {
           </TouchableOpacity>
         ))}
       </View>
+
+      <Text style={styles.label}>선호하는 지역</Text>
+      {renderGridButtons(REGIONS, preferredRegionCode, setPreferredRegionCode)}
 
       <Text style={styles.label}>선호하는 나이대 ({preferredAgeRange[0]}세 ~ {preferredAgeRange[1]}세)</Text>
       <View style={styles.sliderContainer}>

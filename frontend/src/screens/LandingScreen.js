@@ -31,7 +31,7 @@ export default function LandingScreen({ navigation }) {
           {/* 개발용 로그인 - 온보딩 페이지로 이동 */}
           <TouchableOpacity
             style={styles.devButton}
-            onPress={() => navigation.navigate('Onboarding')}
+            onPress={() => navigation.navigate('Onboarding', { isDevLogin: true })}
           >
             <Text style={styles.devButtonText}>[개발용] 온보딩 이동</Text>
           </TouchableOpacity>

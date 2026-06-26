@@ -21,12 +21,21 @@ function AppNavigator() {
   );
 }
 
+const linking = {
+  prefixes: ['realmatch://'],
+  config: {
+    screens: {
+      Login: 'oauth/callback',
+    },
+  },
+};
+
 export default function App() {
   if (Platform.OS === 'web') {
     return (
       <View style={styles.webWrapper}>
         <View style={styles.webDeviceFrame}>
-          <NavigationContainer>
+          <NavigationContainer linking={linking}>
             <AppNavigator />
           </NavigationContainer>
         </View>
@@ -36,7 +45,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.appContainer}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <AppNavigator />
       </NavigationContainer>
     </SafeAreaView>
