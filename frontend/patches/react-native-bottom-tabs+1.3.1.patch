@@ -1,0 +1,35 @@
+diff --git a/node_modules/react-native-bottom-tabs/ios/RCTTabViewComponentView.mm b/node_modules/react-native-bottom-tabs/ios/RCTTabViewComponentView.mm
+index bd8edce..5e04f94 100644
+--- a/node_modules/react-native-bottom-tabs/ios/RCTTabViewComponentView.mm
++++ b/node_modules/react-native-bottom-tabs/ios/RCTTabViewComponentView.mm
+@@ -221,10 +221,13 @@ - (void)updateState:(const facebook::react::State::Shared &)state oldState:(cons
+ //  MARK: TabViewProviderDelegate
+ 
+ - (void)onPageSelectedWithKey:(NSString *)key reactTag:(NSNumber *)reactTag {
++  if (key == nil) {
++    key = @"";
++  }
+   auto eventEmitter = std::static_pointer_cast<const RNCTabViewEventEmitter>(_eventEmitter);
+   if (eventEmitter) {
+     eventEmitter->onPageSelected(RNCTabViewEventEmitter::OnPageSelected{
+-      .key = [key cStringUsingEncoding:kCFStringEncodingUTF8]
++      .key = std::string([key UTF8String])
+     });
+   }
+ }
+diff --git a/node_modules/react-native-bottom-tabs/ios/TabViewProvider.swift b/node_modules/react-native-bottom-tabs/ios/TabViewProvider.swift
+index 799f3c0..144360a 100644
+--- a/node_modules/react-native-bottom-tabs/ios/TabViewProvider.swift
++++ b/node_modules/react-native-bottom-tabs/ios/TabViewProvider.swift
+@@ -204,9 +204,9 @@ public final class TabInfo: NSObject {
+     }
+ 
+     self.hostingController = PlatformHostingController(rootView: TabViewImpl(props: props) { key in
+-      self.delegate?.onPageSelected(key: key, reactTag: self.reactTag)
++      self.delegate?.onPageSelected(key: key ?? "", reactTag: self.reactTag)
+     } onLongPress: { key in
+-      self.delegate?.onLongPress(key: key, reactTag: self.reactTag)
++      self.delegate?.onLongPress(key: key ?? "", reactTag: self.reactTag)
+     } onLayout: { size  in
+       self.delegate?.onLayout(size: size, reactTag: self.reactTag)
+     } onTabBarMeasured: { height in

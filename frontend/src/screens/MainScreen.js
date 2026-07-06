@@ -1,59 +1,48 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { createNativeBottomTabNavigator } from '@bottom-tabs/react-navigation';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import { colors } from '../theme/colors';
 
-const Tab = createBottomTabNavigator();
+const Tab = createNativeBottomTabNavigator();
 
-// 임시 스크린 컴포넌트
-const DummyScreen = ({ route }) => (
-  <View style={styles.container}>
-    <Text style={styles.text}>{route.name} 임시</Text>
-  </View>
-);
+// 네이티브 엔진 메모리 충돌을 막기 위해 화면 5개를 각각 독립된 컴포넌트로 분리
+const CommunityScreen = () => <View style={styles.container}><Text style={styles.text}>커뮤니티 임시</Text></View>;
+const CallScreen = () => <View style={styles.container}><Text style={styles.text}>랜덤 통화 임시</Text></View>;
+const HomeScreen = () => <View style={styles.container}><Text style={styles.text}>홈 임시</Text></View>;
+const ChatScreen = () => <View style={styles.container}><Text style={styles.text}>채팅 임시</Text></View>;
+const ProfileScreen = () => <View style={styles.container}><Text style={styles.text}>마이페이지 임시</Text></View>;
 
 export default function MainScreen() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarShowLabel: false, // 하단바 텍스트 라벨 숨기기
-        tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: colors.background.webWrapper,
-          elevation: 0,
-          height: 64,
-          paddingBottom: 12,
-          paddingTop: 8,
-        },
-        // 하단바 클릭 시 색상
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.text.secondary,
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused }) => {
           let iconName;
 
-          if (route.name === '홈') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === '커뮤니티') {
-            iconName = focused ? 'planet' : 'planet-outline';
+          if (route.name === '커뮤니티') {
+            iconName = focused ? 'globe' : 'globe';
           } else if (route.name === '랜덤 통화') {
-            iconName = focused ? 'call' : 'call-outline';
+            iconName = focused ? 'phone.fill' : 'phone';
+          } else if (route.name === '홈') {
+            iconName = focused ? 'house.fill' : 'house';
           } else if (route.name === '채팅') {
-            iconName = focused ? 'chatbubble' : 'chatbubble-outline';
+            iconName = focused ? 'message.fill' : 'message';
           } else if (route.name === '마이페이지') {
-            iconName = focused ? 'person' : 'person-outline';
+            iconName = focused ? 'person.fill' : 'person';
           }
 
-          return <Ionicons name={iconName} size={26} color={color} />;
+          // 네이티브 탭바가 요구하는 애플 순정 아이콘(SF Symbols) 형식으로 반환
+          return Platform.OS === 'ios' ? { sfSymbol: iconName } : undefined;
         },
       })}
     >
-      <Tab.Screen name="커뮤니티" component={DummyScreen} />
-      <Tab.Screen name="랜덤 통화" component={DummyScreen} />
-      <Tab.Screen name="홈" component={DummyScreen} />
-      <Tab.Screen name="채팅" component={DummyScreen} />
-      <Tab.Screen name="마이페이지" component={DummyScreen} />
+      <Tab.Screen name="홈" component={HomeScreen} getId={() => '홈'} />
+      <Tab.Screen name="커뮤니티" component={CommunityScreen} getId={() => '커뮤니티'} />
+      <Tab.Screen name="랜덤 통화" component={CallScreen} getId={() => '랜덤통화'} />
+      <Tab.Screen name="채팅" component={ChatScreen} getId={() => '채팅'} />
+      <Tab.Screen name="마이페이지" component={ProfileScreen} getId={() => '마이페이지'} />
     </Tab.Navigator>
   );
 }
